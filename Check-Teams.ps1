@@ -26,8 +26,6 @@ $Teams = Get-Team
  
 ForEach ($Team in $Teams)
 {
-    $TeamUsers = Get-TeamUser -GroupId $Team.GroupId
-    
     $UnifiedGroup = Get-UnifiedGroup -Identity $Team.GroupId
     $SPOSite = Get-SPOSite -Identity $UnifiedGroup.SharePointSiteUrl
     $FolderStatistics = Get-MailboxFolderStatistics -Identity $UnifiedGroup.Identity | Where {$_.FolderPath -eq "/Conversation History/Team Chat"}
