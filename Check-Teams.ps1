@@ -3,6 +3,7 @@
 This script gathers information across Office 365 about Teams
 
 .DESCRIPTION
+REquires PowerShell connection to Exchange Online, SharePointOnline, and Teams
 
 .NOTES
 1.0 - 
@@ -18,10 +19,12 @@ Check-Teams
 
 .LINK
 https://www.mcsmlab.com/about
-https://github.com/MCSMLab/
+https://github.com/MCSMLab/Check-Teams/blob/master/Check-Teams.ps1
 #>
 
+$ErrorActionPreference = 'silentlycontinue'
 $Output = @()
+$TotalTeams = (Get-Team).count
 $Teams = Get-Team
  
 ForEach ($Team in $Teams)
@@ -33,15 +36,19 @@ ForEach ($Team in $Teams)
     $Result = New-Object Object
     $Result | Add-Member DisplayName $Team.DisplayName
     $Result | Add-Member Description $Team.Description
+    $Result | Add-Member AccessType $UnifiedGroup.AccessType
     $Result | Add-Member Classification $UnifiedGroup.Classification
     $Result | Add-Member EmailAddress $UnifiedGroup.PrimarySmtpAddress
+    $Result | Add-Member Expires $UnifiedGroup.ExpirationTime
     $Result | Add-Member MemberCount $UnifiedGroup.GroupMemberCount
     $Result | Add-Member GuestCount $UnifiedGroup.GroupExternalMemberCount
     $Result | Add-Member HiddenfromOutlook $UnifiedGroup.HiddenFromExchangeClientsEnabled
     $Result | Add-Member StorageUsedMB $SPOSite.StorageUsageCurrent
     $Result | Add-Member TeamChatsinMBX $FolderStatistics.ItemsInFolder
   
-    $Output+=$Result
+    $Output += $Result
 }
  
+Write-Host
+Write-Host "You have $TotalTeams Teams in your tenant"
 $Output
